@@ -2,11 +2,11 @@ import { createElement } from '../../../render.js';
 import { createEventOffersTemplate } from './event-offers.js';
 import { createEventDestinationTemplate } from './event-destination.js';
 
-export function createFormEventDetailsTemplate() {
+export function createFormEventDetailsTemplate(point, destination, offersByType) {
   return `
     <section class="event__details">
-      ${createEventOffersTemplate()}
-      ${createEventDestinationTemplate()}
+      ${createEventOffersTemplate(point, offersByType)}
+      ${createEventDestinationTemplate(destination)}
     </section>
   `;
 }

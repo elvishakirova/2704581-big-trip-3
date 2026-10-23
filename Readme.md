@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Эльвира](https://up.htmlacademy.ru/ecmascript-individual/3/user/2704581).
-* Наставник: [Евгений Лепёшкин]().
+* Наставник: [Евгений Лепёшкин](https://htmlacademy.ru/profile/spearance).
 
 ---
 

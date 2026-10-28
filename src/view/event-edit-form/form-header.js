@@ -5,21 +5,27 @@ function createDestinationTemplate(destination) {
   return `<option value="${destination.name}"></option>`;
 }
 
-export function createFormHeaderTemplate(point, destination, destinations = []) {
+export function createFormHeaderTemplate(
+  point,
+  destination,
+  destinations = [],
+) {
   const {
     type = 'flight',
-    date_from = '',
-    date_to = '',
-    base_price = ''
+    'date_from': dateFrom = '',
+    'date_to': dateTo = '',
+    'base_price': basePrice = '',
   } = point ?? {};
 
-  const startDate = humanizeFormDate(date_from);
-  const endDate = humanizeFormDate(date_to);
+  const startDate = humanizeFormDate(dateFrom);
+  const endDate = humanizeFormDate(dateTo);
 
   const destinationName = destination?.name ?? '';
-  const destinationsTemplate = destinations.map(createDestinationTemplate).join('');
+  const destinationsTemplate = destinations
+    .map(createDestinationTemplate)
+    .join('');
 
-  const getChecked = (eventType) => type === eventType ? 'checked' : '';
+  const getChecked = (eventType) => (type === eventType ? 'checked' : '');
 
   return `
     <header class="event__header">
@@ -105,7 +111,7 @@ export function createFormHeaderTemplate(point, destination, destinations = []) 
           <span class="visually-hidden">Price</span>
             &euro;
         </label>
-        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${base_price}">
+        <input class="event__input  event__input--price" id="event-price-1" type="text" name="event-price" value="${basePrice}">
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>

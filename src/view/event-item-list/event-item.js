@@ -12,14 +12,18 @@ function createOfferTemplate(offer) {
 }
 
 export function createEventItemTemplate(point, destination, offersByType) {
-  const {date_from, date_to, is_favorite} = point;
+  const {
+    'date_from': dateFrom,
+    'date_to': dateTo,
+    'is_favorite': isFavorite
+  } = point;
 
-  const date = humanizePointDate(date_from);
-  const startTime = humanizePointTime(date_from);
-  const endTime = humanizePointTime(date_to);
-  const duration = getPointDuration(date_from, date_to);
+  const date = humanizePointDate(dateFrom);
+  const startTime = humanizePointTime(dateFrom);
+  const endTime = humanizePointTime(dateTo);
+  const duration = getPointDuration(dateFrom, dateTo);
 
-  const favoriteClassName = is_favorite
+  const favoriteClassName = isFavorite
     ? 'event__favorite-btn event__favorite-btn--active'
     : 'event__favorite-btn';
 
@@ -32,21 +36,21 @@ export function createEventItemTemplate(point, destination, offersByType) {
   return `
     <li class="trip-events__item">
       <div class="event">
-        <time class="event__date" datetime="${date_from}">${date}</time>
+        <time class="event__date" datetime="${dateFrom}">${date}</time>
           <div class="event__type">
             <img class="event__type-icon" width="42" height="42" src="img/icons/${point.type}.png" alt="Event type icon">
           </div>
           <h3 class="event__title">${point.type} ${destination.name}</h3>
           <div class="event__schedule">
             <p class="event__time">
-              <time class="event__start-time" datetime="${date_from}">${startTime}</time>
+              <time class="event__start-time" datetime="${dateFrom}">${startTime}</time>
               &mdash;
-              <time class="event__end-time" datetime="${date_to}">${endTime}</time>
+              <time class="event__end-time" datetime="${dateTo}">${endTime}</time>
             </p>
             <p class="event__duration">${duration}</p>
           </div>
           <p class="event__price">
-          &euro;&nbsp;<span class="event__price-value">${point.base_price}</span>
+          &euro;&nbsp;<span class="event__price-value">${point['base_price']}</span>
           </p>
           <h4 class="visually-hidden">Offers:</h4>
           <ul class="event__selected-offers">

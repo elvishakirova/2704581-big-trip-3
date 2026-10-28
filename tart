@@ -1,0 +1,18 @@
+ package-lock.json                                  |   9 [32m+[m
+ package.json                                       |   3 [32m+[m
+ src/main.js                                        |   9 [32m+[m[31m-[m
+ src/mock/destinations.js                           | 166 [32m++++++++++++++++[m
+ src/mock/offers.js                                 | 208 [32m+++++++++++++++++++++[m
+ src/mock/points.js                                 | 126 [32m+++++++++++++[m
+ src/model/destinations-model.js                    |   9 [32m+[m
+ src/model/offers-model.js                          |   9 [32m+[m
+ src/model/points-model.js                          |  11 [32m++[m
+ src/presenter/board-presenter.js                   |  25 [32m++[m[31m-[m
+ src/utils.js                                       |  33 [32m++++[m
+ .../form-event-details/event-destination.js        |  22 [32m++[m[31m-[m
+ .../form-event-details/event-offers.js             |  75 [32m+++[m[31m-----[m
+ .../form-event-details/form-event-details.js       |   6 [32m+[m[31m-[m
+ src/view/event-edit-form/form-header.js            |  56 [32m++++[m[31m--[m
+ src/view/event-edit-form/form.js                   |  15 [32m+[m[31m-[m
+ src/view/event-item-list/event-item.js             |  60 [32m++++[m[31m--[m
+ 17 files changed, 745 insertions(+), 97 deletions(-)

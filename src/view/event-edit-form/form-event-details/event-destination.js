@@ -1,5 +1,3 @@
-import { createElement } from '../../../render.js';
-
 function createPhotoTemplate(picture) {
   return `<img class="event__photo" src="${picture.src}" alt="${picture.description}">`;
 }
@@ -25,22 +23,4 @@ export function createEventDestinationTemplate(destination) {
           </div>
     </section>
   `;
-}
-
-export default class EventDestination {
-  getTemplate() {
-    return createEventDestinationTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
 }

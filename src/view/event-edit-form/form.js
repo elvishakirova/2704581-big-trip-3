@@ -1,4 +1,4 @@
-import { createElement } from '../../render.js';
+import AbstractView from '../../framework/view/abstract-view.js';
 import { createFormHeaderTemplate } from './form-header.js';
 import {createFormEventDetailsTemplate } from './form-event-details/form-event-details.js';
 
@@ -11,27 +11,29 @@ function createFormTemplate(point, destination, offersByType, destinations) {
   `;
 }
 
-export default class Form {
+export default class Form extends AbstractView {
+  #point = null;
+  #destination = null;
+  #offersByType = null;
+  #destinations = null;
+
   constructor({ point = null, destination = null, offersByType = null, destinations = null } = {}) {
-    this.point = point;
-    this.destination = destination;
-    this.offersByType = offersByType;
-    this.destinations = destinations;
+    super();
+    this.#point = point;
+    this.#destination = destination;
+    this.#offersByType = offersByType;
+    this.#destinations = destinations;
   }
 
-  getTemplate() {
-    return createFormTemplate(this.point, this.destination, this.offersByType, this.destinations);
+  get template() {
+    return createFormTemplate(this.#point, this.#destination, this.#offersByType, this.#destinations);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
+  setFormSubmitHandler(callback) {
+    this.element.addEventListener('submit', callback);
   }
 
-  removeElement() {
-    this.element = null;
+  setCloseClickHandler(callback) {
+    this.element.querySelector('.event__rollup-btn').addEventListener('click', callback);
   }
 }

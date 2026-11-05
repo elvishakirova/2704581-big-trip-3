@@ -1,4 +1,4 @@
-import { getRandomInteger } from '../utils.js';
+import { getRandomInteger } from '../utils/utils.js';
 const RandomImages = {
   MIN: 1,
   MAX: 100,

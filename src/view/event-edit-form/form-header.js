@@ -1,5 +1,4 @@
-import { createElement } from '../../render.js';
-import { humanizeFormDate } from '../../utils.js';
+import { humanizeFormDate } from '../../utils/utils.js';
 
 function createDestinationTemplate(destination) {
   return `<option value="${destination.name}"></option>`;
@@ -116,24 +115,9 @@ export function createFormHeaderTemplate(
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
       <button class="event__reset-btn" type="reset">Cancel</button>
+      <button class="event__rollup-btn" type="button">
+        <span class="visually-hidden">Close event</span>
+      </button>
     </header>
   `;
-}
-
-export default class FormHeader {
-  getTemplate() {
-    return createFormHeaderTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
 }

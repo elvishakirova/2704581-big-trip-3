@@ -1,5 +1,3 @@
-import { createElement } from '../../../render.js';
-
 function createOfferTemplate(offer, selectedOffers) {
   const isChecked = selectedOffers.includes(offer.id) ? 'checked' : '';
 
@@ -42,20 +40,3 @@ export function createEventOffersTemplate(point, offersByType) {
   `;
 }
 
-export default class EventOffers {
-  getTemplate() {
-    return createEventOffersTemplate();
-  }
-
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate());
-    }
-
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
-}

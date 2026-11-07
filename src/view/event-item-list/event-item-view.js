@@ -70,7 +70,7 @@ export function createEventItemTemplate(point, destination, offersByType) {
   `;
 }
 
-export default class EventItem extends AbstractView {
+export default class EventItemView extends AbstractView {
   #point = null;
   #destination = null;
   #offersByType = null;

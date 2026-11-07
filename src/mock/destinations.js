@@ -6,7 +6,7 @@ const RandomImages = {
 
 const mockDestinations = [
   {
-    id: 'destination-2',
+    id: 'destination-1',
     description:
       'Santiago de Chile is a beautiful city, a true asian pearl, with crowded streets.',
     name: 'Santiago de Chile',

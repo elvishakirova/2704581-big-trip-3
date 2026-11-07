@@ -1,5 +1,5 @@
-import { createEventOffersTemplate } from './event-offers.js';
-import { createEventDestinationTemplate } from './event-destination.js';
+import { createEventOffersTemplate } from './event-offers-view.js';
+import { createEventDestinationTemplate } from './event-destination-view.js';
 
 export function createFormEventDetailsTemplate(point, destination, offersByType) {
   return `

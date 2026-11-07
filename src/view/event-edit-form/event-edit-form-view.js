@@ -1,6 +1,6 @@
 import AbstractView from '../../framework/view/abstract-view.js';
-import { createFormHeaderTemplate } from './form-header.js';
-import {createFormEventDetailsTemplate } from './form-event-details/form-event-details.js';
+import { createFormHeaderTemplate } from './form-header-view.js';
+import {createFormEventDetailsTemplate } from './form-event-details-view.js';
 
 function createFormTemplate(point, destination, offersByType, destinations) {
   return `
@@ -11,7 +11,7 @@ function createFormTemplate(point, destination, offersByType, destinations) {
   `;
 }
 
-export default class Form extends AbstractView {
+export default class EventEditFormView extends AbstractView {
   #point = null;
   #destination = null;
   #offersByType = null;

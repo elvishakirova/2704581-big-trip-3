@@ -1,13 +1,12 @@
 import { render } from '../framework/render.js';
-import { createFormSwitcher } from '../utils/form-switcher.js';
 import SortView from '../view/sort-view.js';
-import EventEditFormView from '../view/event-edit-form/event-edit-form-view.js';
 import EventItemListView from '../view/event-item-list/event-item-list-view.js';
-import EventItemView from '../view/event-item-list/event-item-view.js';
 import NoPointsView from '../view/no-points-view.js';
+import PointPresenter from './point-presenter.js';
 
 export default class BoardPresenter {
   sortComponent = new SortView();
+  pointPresenters = new Map();
   eventListComponent = new EventItemListView();
 
   constructor({ boardContainer, offersModel, destinationsModel, pointsModel }) {
@@ -41,24 +40,28 @@ export default class BoardPresenter {
         (item) => item.type === point.type,
       );
 
-      const eventItemComponent = new EventItemView({ point, destination, offersByType });
-      const eventEditComponent = new EventEditFormView({ point, destination, offersByType, destinations: this.boardDestinations });
-
-      const { openForm, closeForm } = createFormSwitcher(
-        eventItemComponent,
-        eventEditComponent,
-      );
-
-      eventItemComponent.setEditClickHandler(openForm);
-
-      eventEditComponent.setFormSubmitHandler((evt) => {
-        evt.preventDefault();
-        closeForm();
+      const pointPresenter = new PointPresenter({
+        pointContainer: this.eventListComponent.element,
+        destinations: this.boardDestinations,
+        onDataChange: this.handlePointChange,
+        onModeChange: this.handleModeChange,
       });
 
-      eventEditComponent.setCloseClickHandler(closeForm);
+      pointPresenter.init(point, destination, offersByType);
 
-      render(eventItemComponent, this.eventListComponent.element);
+      this.pointPresenters.set(point.id, pointPresenter);
     }
   }
+
+  handlePointChange = (updatedPoint) => {
+    this.boardPoints = this.boardPoints.map((point) =>
+      point.id === updatedPoint.id ? updatedPoint : point,
+    );
+
+    this.pointPresenters.get(updatedPoint.id).init(updatedPoint);
+  };
+
+  handleModeChange = () => {
+    this.pointPresenters.forEach((presenter) => presenter.resetView());
+  };
 }

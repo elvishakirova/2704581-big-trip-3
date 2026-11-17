@@ -35,4 +35,12 @@ export default class SortView extends AbstractView {
   get template() {
     return createSortTemplate();
   }
+
+  setSortChangeHandler(callback) {
+    this.element.addEventListener('change', (evt) => {
+      if (evt.target.matches('.trip-sort__input')) {
+        callback(evt.target.value);
+      }
+    });
+  }
 }

@@ -8,6 +8,7 @@ export default class BoardPresenter {
   sortComponent = new SortView();
   pointPresenters = new Map();
   eventListComponent = new EventItemListView();
+  currentSortType = 'sort-day';
 
   constructor({ boardContainer, offersModel, destinationsModel, pointsModel }) {
     this.boardContainer = boardContainer;
@@ -26,9 +27,16 @@ export default class BoardPresenter {
       return;
     }
 
+    this.sortComponent.setSortChangeHandler(this.handleSortChange);
+
     render(this.sortComponent, this.boardContainer);
     render(this.eventListComponent, this.boardContainer);
 
+    this.sortPoints();
+    this.renderPoints();
+  }
+
+  renderPoints() {
     for (let i = 0; i < this.boardPoints.length; i++) {
       const point = this.boardPoints[i];
 
@@ -53,6 +61,34 @@ export default class BoardPresenter {
     }
   }
 
+  clearPoints() {
+    this.pointPresenters.forEach((presenter) => presenter.destroy());
+    this.pointPresenters.clear();
+  }
+
+  sortPoints() {
+    switch (this.currentSortType) {
+      case 'sort-day':
+        this.boardPoints.sort(
+          (a, b) => new Date(a.date_from) - new Date(b.date_from),
+        );
+        break;
+
+      case 'sort-time':
+        this.boardPoints.sort(
+          (a, b) =>
+            new Date(b.date_to) -
+            new Date(b.date_from) -
+            (new Date(a.date_to) - new Date(a.date_from)),
+        );
+        break;
+
+      case 'sort-price':
+        this.boardPoints.sort((a, b) => b.base_price - a.base_price);
+        break;
+    }
+  }
+
   handlePointChange = (updatedPoint) => {
     this.boardPoints = this.boardPoints.map((point) =>
       point.id === updatedPoint.id ? updatedPoint : point,
@@ -63,5 +99,17 @@ export default class BoardPresenter {
 
   handleModeChange = () => {
     this.pointPresenters.forEach((presenter) => presenter.resetView());
+  };
+
+  handleSortChange = (sortType) => {
+    if (this.currentSortType === sortType) {
+      return;
+    }
+
+    this.currentSortType = sortType;
+
+    this.sortPoints();
+    this.clearPoints();
+    this.renderPoints();
   };
 }

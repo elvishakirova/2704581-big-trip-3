@@ -1,4 +1,4 @@
-import { render, replace } from '../framework/render.js';
+import { render, replace, remove } from '../framework/render.js';
 import EventItemView from '../view/event-item-list/event-item-view.js';
 import EventEditFormView from '../view/event-edit-form/event-edit-form-view.js';
 
@@ -99,4 +99,10 @@ export default class PointPresenter {
   resetView = () => {
     this.closeForm();
   };
+
+  destroy() {
+    this.resetView();
+    remove(this.eventItemComponent);
+    remove(this.eventEditComponent);
+  }
 }

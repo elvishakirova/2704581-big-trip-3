@@ -1,32 +1,34 @@
+
 import { render, replace, remove } from '../framework/render.js';
 import EventItemView from '../view/event-item-list/event-item-view.js';
 import EventEditFormView from '../view/event-edit-form/event-edit-form-view.js';
 
 export default class PointPresenter {
   point = null;
-  destination = null;
-  offersByType = null;
-
   eventItemComponent = null;
   eventEditComponent = null;
+  isEditing = false;
 
-  constructor({ pointContainer, destinations, onDataChange, onModeChange }) {
+  constructor({ pointContainer, destinations, offers, onDataChange, onModeChange }) {
     this.pointContainer = pointContainer;
     this.destinations = destinations;
+    this.offers = offers;
     this.onDataChange = onDataChange;
     this.onModeChange = onModeChange;
   }
 
-  init(
-    point,
-    destination = this.destination,
-    offersByType = this.offersByType,
-  ) {
+  init(point) {
     this.point = point;
-    this.destination = destination;
-    this.offersByType = offersByType;
 
     const previousEventItemComponent = this.eventItemComponent;
+
+    const destination = this.destinations.find(
+      (item) => item.id === point.destination,
+    );
+
+    const offersByType = this.offers.find(
+      (item) => item.type === point.type,
+    );
 
     this.eventItemComponent = new EventItemView({
       point,
@@ -42,15 +44,7 @@ export default class PointPresenter {
     });
 
     this.eventItemComponent.setEditClickHandler(this.openForm);
-
-    this.eventItemComponent.setFavoriteClickHandler((evt) => {
-      evt.preventDefault();
-
-      this.onDataChange({
-        ...point,
-        'is_favorite': !point.is_favorite,
-      });
-    });
+    this.eventItemComponent.setFavoriteClickHandler(this.handleFavoriteClick);
 
     this.eventEditComponent.setFormSubmitHandler((evt) => {
       evt.preventDefault();
@@ -66,7 +60,14 @@ export default class PointPresenter {
     }
   }
 
-  isEditing = false;
+  handleFavoriteClick = (evt) => {
+    evt.preventDefault();
+
+    this.onDataChange({
+      ...this.point,
+      'is_favorite': !this.point.is_favorite,
+    });
+  };
 
   closeForm = () => {
     if (!this.isEditing) {

@@ -1,3 +1,4 @@
+
 import { render } from '../framework/render.js';
 import SortView from '../view/sort-view.js';
 import EventItemListView from '../view/event-item-list/event-item-list-view.js';
@@ -37,25 +38,16 @@ export default class BoardPresenter {
   }
 
   renderPoints() {
-    for (let i = 0; i < this.boardPoints.length; i++) {
-      const point = this.boardPoints[i];
-
-      const destination = this.boardDestinations.find(
-        (item) => item.id === point.destination,
-      );
-
-      const offersByType = this.boardOffers.find(
-        (item) => item.type === point.type,
-      );
-
+    for (const point of this.boardPoints) {
       const pointPresenter = new PointPresenter({
         pointContainer: this.eventListComponent.element,
         destinations: this.boardDestinations,
+        offers: this.boardOffers,
         onDataChange: this.handlePointChange,
         onModeChange: this.handleModeChange,
       });
 
-      pointPresenter.init(point, destination, offersByType);
+      pointPresenter.init(point);
 
       this.pointPresenters.set(point.id, pointPresenter);
     }

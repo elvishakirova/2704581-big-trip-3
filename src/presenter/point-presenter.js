@@ -41,6 +41,7 @@ export default class PointPresenter {
       destination,
       offersByType,
       destinations: this.destinations,
+      offers: this.offers,
     });
 
     this.eventItemComponent.setEditClickHandler(this.openForm);

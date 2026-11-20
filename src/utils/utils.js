@@ -1,7 +1,10 @@
 import flatpickr from 'flatpickr';
+import dayjs from 'dayjs';
 
-const DATE_FORMAT = 'M j';
-const TIME_FORMAT = 'H:i';
+const DATE_FORMAT = 'MMM DD';
+const TIME_FORMAT = 'HH:mm';
+const MINUTES_IN_HOUR = 60;
+const HOURS_IN_DAY = 24;
 
 function getRandomArrayElement(items) {
   return items[Math.floor(Math.random() * items.length)];
@@ -12,18 +15,32 @@ function getRandomInteger(min, max) {
 }
 
 function humanizePointDate(date) {
-  return date ? flatpickr.formatDate(new Date(date), DATE_FORMAT) : '';
+  return date ? dayjs(date).format(DATE_FORMAT) : '';
 }
 
 function humanizePointTime(date) {
-  return date ? flatpickr.formatDate(new Date(date), TIME_FORMAT) : '';
+  return date ? dayjs(date).format(TIME_FORMAT) : '';
 }
 
 function getPointDuration(dateFrom, dateTo) {
-  const difference = new Date(dateTo) - new Date(dateFrom);
-  const minutes = Math.floor(difference / 60000);
+  const totalMinutes = dayjs(dateTo).diff(dayjs(dateFrom), 'minute');
+  const totalHours = Math.floor(totalMinutes / MINUTES_IN_HOUR);
+  const days = Math.floor(totalHours / HOURS_IN_DAY);
+  const hours = totalHours % HOURS_IN_DAY;
+  const minutes = totalMinutes % MINUTES_IN_HOUR;
 
-  return `${minutes}M`;
+  const formattedMinutes = `${String(minutes).padStart(2, '0')}M`;
+  const formattedHours = `${String(hours).padStart(2, '0')}H`;
+
+  if (days > 0) {
+    return `${String(days).padStart(2, '0')}D ${formattedHours} ${formattedMinutes}`;
+  }
+
+  if (totalHours > 0) {
+    return `${formattedHours} ${formattedMinutes}`;
+  }
+
+  return formattedMinutes;
 }
 
 function humanizeFormDate(date) {

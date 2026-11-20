@@ -75,6 +75,7 @@ export default class PointPresenter {
       return;
     }
 
+    this.eventEditComponent.destroyDatepickers();
     replace(this.eventItemComponent, this.eventEditComponent);
     document.removeEventListener('keydown', this.onEscKeyDown);
     this.isEditing = false;
@@ -94,6 +95,7 @@ export default class PointPresenter {
     this.onModeChange();
 
     replace(this.eventEditComponent, this.eventItemComponent);
+    this.eventEditComponent.initDatepickers();
     document.addEventListener('keydown', this.onEscKeyDown);
     this.isEditing = true;
   };

@@ -4,10 +4,16 @@ import { createFormEventDetailsTemplate } from './form-event-details-view.js';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 
-function createFormTemplate(point, destination, offersByType, destinations) {
+function createFormTemplate(
+  point,
+  destination,
+  offersByType,
+  destinations,
+  isNew,
+) {
   return `
     <form class="event event--edit" action="#" method="post">
-      ${createFormHeaderTemplate(point, destination, destinations)}
+      ${createFormHeaderTemplate(point, destination, destinations, isNew)}
       ${createFormEventDetailsTemplate(point, destination, offersByType)}
     </form>
   `;
@@ -19,8 +25,10 @@ export default class EventEditFormView extends AbstractStatefulView {
   #destinations = null;
   #formSubmitHandler = null;
   #closeClickHandler = null;
+  #deleteClickHandler = null;
   #offers = [];
   #datepickers = [];
+  #isNew = false;
 
   constructor({
     point = null,
@@ -28,6 +36,7 @@ export default class EventEditFormView extends AbstractStatefulView {
     offersByType = null,
     destinations = null,
     offers = [],
+    isNew = false,
   } = {}) {
     super();
 
@@ -36,7 +45,7 @@ export default class EventEditFormView extends AbstractStatefulView {
     this.#offersByType = offersByType;
     this.#destinations = destinations;
     this.#offers = offers;
-
+    this.#isNew = isNew;
     this._restoreHandlers();
   }
 
@@ -46,7 +55,43 @@ export default class EventEditFormView extends AbstractStatefulView {
       this.#destination,
       this.#offersByType,
       this.#destinations,
+      this.#isNew,
     );
+  }
+
+  getPointData() {
+    const { date_from: dateFrom, date_to: dateTo } = this._state;
+    const price = Number(this._state.base_price);
+
+    const destinationInput = this.element.querySelector(
+      '.event__input--destination',
+    );
+    const destinationName = destinationInput.value.trim();
+    const destination = this.#destinations.find(
+      (item) => item.name === destinationName,
+    );
+
+    if (!destination) {
+      destinationInput.setCustomValidity('Choose a destination from the list.');
+      destinationInput.reportValidity();
+      return null;
+    }
+
+    if (
+      !dateFrom ||
+      !dateTo ||
+      Date.parse(dateTo) < Date.parse(dateFrom) ||
+      !Number.isSafeInteger(price) ||
+      price <= 0
+    ) {
+      return null;
+    }
+
+    return {
+      ...this._state,
+      destination: destination.id,
+      'base_price': price,
+    };
   }
 
   setFormSubmitHandler(callback) {
@@ -61,6 +106,13 @@ export default class EventEditFormView extends AbstractStatefulView {
       .addEventListener('click', callback);
   }
 
+  setDeleteClickHandler(callback) {
+    this.#deleteClickHandler = callback;
+    this.element
+      .querySelector('.event__reset-btn')
+      .addEventListener('click', callback);
+  }
+
   _restoreHandlers() {
     this.element
       .querySelector('.event__type-group')
@@ -71,8 +123,16 @@ export default class EventEditFormView extends AbstractStatefulView {
       .addEventListener('change', this.handleDestinationChange);
 
     this.element
+      .querySelector('.event__input--destination')
+      .addEventListener('input', (evt) => {
+        evt.target.setCustomValidity('');
+      });
+
+    this.element
       .querySelector('.event__input--price')
       .addEventListener('input', this.handlePriceInput);
+
+    this.element.addEventListener('change', this.handleOffersChange);
 
     if (this.#formSubmitHandler) {
       this.element.addEventListener('submit', this.#formSubmitHandler);
@@ -82,6 +142,10 @@ export default class EventEditFormView extends AbstractStatefulView {
       this.element
         .querySelector('.event__rollup-btn')
         .addEventListener('click', this.#closeClickHandler);
+    }
+
+    if (this.#deleteClickHandler) {
+      this.setDeleteClickHandler(this.#deleteClickHandler);
     }
 
     if (this.element.isConnected) {
@@ -117,7 +181,29 @@ export default class EventEditFormView extends AbstractStatefulView {
   };
 
   handlePriceInput = (evt) => {
-    this._setState({ 'base_price': evt.target.value });
+    const input = evt.target;
+
+    if (!/^[0-9]*$/.test(input.value)) {
+      input.value = String(this._state.base_price ?? '');
+      return;
+    }
+
+    this._setState({ 'base_price': input.value });
+  };
+
+  handleOffersChange = (evt) => {
+    if (!evt.target.matches('.event__offer-checkbox')) {
+      return;
+    }
+
+    const checkedOffers = this.element.querySelectorAll(
+      '.event__offer-checkbox:checked',
+    );
+    const offers = Array.from(checkedOffers, (input) =>
+      input.name.slice('event-offer-'.length),
+    );
+
+    this._setState({ offers });
   };
 
   initDatepickers() {

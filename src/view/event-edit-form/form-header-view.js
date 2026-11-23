@@ -1,13 +1,15 @@
 import { humanizeFormDate } from '../../utils/utils.js';
+import he from 'he';
 
 function createDestinationTemplate(destination) {
-  return `<option value="${destination.name}"></option>`;
+  return `<option value="${he.encode(destination.name)}"></option>`;
 }
 
 export function createFormHeaderTemplate(
   point,
   destination,
   destinations = [],
+  isNew = false,
 ) {
   const {
     type = 'flight',
@@ -91,7 +93,7 @@ export function createFormHeaderTemplate(
         <label class="event__label  event__type-output" for="event-destination-1">
           ${type}
         </label>
-        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${destinationName}" list="destination-list-1" autocomplete="off">
+        <input class="event__input  event__input--destination" id="event-destination-1" type="text" name="event-destination" value="${he.encode(destinationName)}" list="destination-list-1" autocomplete="off">
         <datalist id="destination-list-1">
           ${destinationsTemplate}
         </datalist>
@@ -114,10 +116,12 @@ export function createFormHeaderTemplate(
       </div>
 
       <button class="event__save-btn  btn  btn--blue" type="submit">Save</button>
-      <button class="event__reset-btn" type="reset">Delete</button>
-      <button class="event__rollup-btn" type="button">
-        <span class="visually-hidden">Open event</span>
-      </button>
+      <button class="event__reset-btn" type="reset">${isNew ? 'Cancel' : 'Delete'}</button>
+        ${isNew ? '' : `
+          <button class="event__rollup-btn" type="button">
+            <span class="visually-hidden">Open event</span>
+          </button>
+        `}
     </header>
   `;
 }

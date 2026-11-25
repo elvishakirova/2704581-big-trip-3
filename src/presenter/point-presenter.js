@@ -1,5 +1,6 @@
 
 import { render, replace, remove } from '../framework/render.js';
+import { UserAction } from '../const.js';
 import EventItemView from '../view/event-item-list/event-item-view.js';
 import EventEditFormView from '../view/event-edit-form/event-edit-form-view.js';
 
@@ -36,23 +37,8 @@ export default class PointPresenter {
       offersByType,
     });
 
-    this.eventEditComponent = new EventEditFormView({
-      point,
-      destination,
-      offersByType,
-      destinations: this.destinations,
-      offers: this.offers,
-    });
-
     this.eventItemComponent.setEditClickHandler(this.openForm);
     this.eventItemComponent.setFavoriteClickHandler(this.handleFavoriteClick);
-
-    this.eventEditComponent.setFormSubmitHandler((evt) => {
-      evt.preventDefault();
-      this.closeForm();
-    });
-
-    this.eventEditComponent.setCloseClickHandler(this.closeForm);
 
     if (previousEventItemComponent === null) {
       render(this.eventItemComponent, this.pointContainer);
@@ -64,7 +50,7 @@ export default class PointPresenter {
   handleFavoriteClick = (evt) => {
     evt.preventDefault();
 
-    this.onDataChange({
+    this.onDataChange(UserAction.UPDATE_POINT, {
       ...this.point,
       'is_favorite': !this.point.is_favorite,
     });
@@ -75,8 +61,9 @@ export default class PointPresenter {
       return;
     }
 
-    this.eventEditComponent.destroyDatepickers();
     replace(this.eventItemComponent, this.eventEditComponent);
+    remove(this.eventEditComponent);
+    this.eventEditComponent = null;
     document.removeEventListener('keydown', this.onEscKeyDown);
     this.isEditing = false;
   };
@@ -93,6 +80,41 @@ export default class PointPresenter {
     }
 
     this.onModeChange();
+
+    const point = this.point;
+    const destination = this.destinations.find(
+      (item) => item.id === point.destination,
+    );
+    const offersByType = this.offers.find(
+      (item) => item.type === point.type,
+    );
+
+    this.eventEditComponent = new EventEditFormView({
+      point,
+      destination,
+      offersByType,
+      destinations: this.destinations,
+      offers: this.offers,
+    });
+
+    this.eventEditComponent.setFormSubmitHandler((evt) => {
+      evt.preventDefault();
+
+      const updatedPoint = this.eventEditComponent.getPointData();
+
+      if (updatedPoint === null) {
+        return;
+      }
+
+      this.onDataChange(UserAction.UPDATE_POINT, updatedPoint);
+    });
+
+    this.eventEditComponent.setCloseClickHandler(this.closeForm);
+
+    this.eventEditComponent.setDeleteClickHandler((evt) => {
+      evt.preventDefault();
+      this.onDataChange(UserAction.DELETE_POINT, this.point);
+    });
 
     replace(this.eventEditComponent, this.eventItemComponent);
     this.eventEditComponent.initDatepickers();

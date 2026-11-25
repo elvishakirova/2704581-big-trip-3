@@ -1,17 +1,10 @@
+import { getFilteredPoints } from '../../utils/filter.js';
 import AbstractView from '../../framework/view/abstract-view.js';
 
-const isFuture = (point) => new Date(point.date_from) > new Date();
-
-const isPresent = (point) =>
-  new Date(point.date_from) <= new Date() &&
-  new Date(point.date_to) >= new Date();
-
-const isPast = (point) => new Date(point.date_to) < new Date();
-
 function createFiltersTemplate(points) {
-  const hasFuture = points.some(isFuture);
-  const hasPresent = points.some(isPresent);
-  const hasPast = points.some(isPast);
+  const hasFuture = getFilteredPoints(points, 'future').length > 0;
+  const hasPresent = getFilteredPoints(points, 'present').length > 0;
+  const hasPast = getFilteredPoints(points, 'past').length > 0;
 
   return `
     <div class="trip-controls__filters">
@@ -53,5 +46,11 @@ export default class FilterView extends AbstractView {
 
   get template() {
     return createFiltersTemplate(this.#points);
+  }
+
+  setFilterChangeHandler(callback) {
+    this.element.querySelector('.trip-filters').addEventListener('change', (evt) => {
+      callback(evt.target.value);
+    });
   }
 }

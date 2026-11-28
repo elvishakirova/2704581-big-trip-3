@@ -6,14 +6,6 @@ const TIME_FORMAT = 'HH:mm';
 const MINUTES_IN_HOUR = 60;
 const HOURS_IN_DAY = 24;
 
-function getRandomArrayElement(items) {
-  return items[Math.floor(Math.random() * items.length)];
-}
-
-function getRandomInteger(min, max) {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
-}
-
 function humanizePointDate(date) {
   return date ? dayjs(date).format(DATE_FORMAT) : '';
 }
@@ -47,4 +39,4 @@ function humanizeFormDate(date) {
   return date ? flatpickr.formatDate(new Date(date), 'd/m/y H:i') : '';
 }
 
-export { getRandomArrayElement, getRandomInteger, humanizePointDate, humanizePointTime, getPointDuration, humanizeFormDate };
+export { humanizePointDate, humanizePointTime, getPointDuration, humanizeFormDate };

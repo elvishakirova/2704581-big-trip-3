@@ -192,10 +192,15 @@ export default class BoardPresenter {
     }
   }
 
-  handlePointChange = (action, point) => {
+  handlePointChange = async (action, point) => {
     switch (action) {
       case UserAction.UPDATE_POINT:
-        this.pointsModel.updatePoint(point);
+        try {
+          await this.pointsModel.updatePoint(point);
+        } catch (error) {
+          // eslint-disable-next-line no-console
+          console.error('Не удалось сохранить точку маршрута', error);
+        }
         break;
       case UserAction.DELETE_POINT:
         this.pointsModel.deletePoint(point.id);

@@ -1,8 +1,12 @@
-import { mockEvents } from '../mock/points.js';
 import Observable from '../framework/observable.js';
 
 export default class PointsModel extends Observable {
-  points = [...mockEvents];
+  points = [];
+
+  constructor(pointsApiService) {
+    super();
+    this.pointsApiService = pointsApiService;
+  }
 
   getPoints() {
     return this.points;
@@ -12,9 +16,11 @@ export default class PointsModel extends Observable {
     this.points = points;
   }
 
-  updatePoint(updatedPoint) {
-    const points = this.getPoints().map((point) =>
-      point.id === updatedPoint.id ? updatedPoint : point,
+  async updatePoint(point) {
+    const updatedPoint = await this.pointsApiService.updatePoint(point);
+
+    const points = this.getPoints().map((currentPoint) =>
+      currentPoint.id === updatedPoint.id ? updatedPoint : currentPoint,
     );
 
     this.setPoints(points);
